@@ -10,7 +10,8 @@
     "target": "ES6",
     "lib": ["es6", "es2017"],
     "types": ["node"],
-    "typeRoots": ["node_modules/@types"]
+    "typeRoots": ["node_modules/@types"],
+    "ignoreDeprecations": "6.0"
   },
   "include": ["./src/**/*.ts"]
 }
