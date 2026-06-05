@@ -9,7 +9,7 @@ import fetch from "node-fetch";
 import * as reltab from "reltab";
 import * as log from "loglevel";
 
-const testBaseUrl = "http://localhost:9000";
+const testBaseUrl = "http://localhost:8765";
 const testFile = "movie_metadata.csv";
 
 async function request(path: string, args: any): Promise<any> {

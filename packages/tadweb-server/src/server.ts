@@ -1,4 +1,5 @@
 import * as express from "express";
+import * as fs from "fs";
 import * as log from "loglevel";
 import * as commandLineArgs from "command-line-args";
 import { AddressInfo } from "net";
@@ -28,7 +29,7 @@ import * as reltabDuckDB from "reltab-duckdb";
 
 const SRV_DIR = "./public/csv";
 
-const portNumber = 9000;
+const portNumber = 8765;
 
 /*
 const initSqlite = async (): Promise<DataSourceConnection> => {
@@ -82,11 +83,27 @@ const testImportFile = async (
   const md = await reltabSqlite.fastImport(ctx.db, filePath);
 };
 */
+
+//Old initDuckDB definition - working in memory - all files processed in RAM
+// const initDuckDB = async (): Promise<DataSourceConnection> => {
+//   const rtOptions: any = { showQueries: true };
+//   const connKey: DataSourceId = {
+//     providerName: "duckdb",
+//     resourceId: ":memory:",
+//   };
+//   const dbc = await getConnection(connKey);
+//   return dbc;
+// };
+
 const initDuckDB = async (): Promise<DataSourceConnection> => {
   const rtOptions: any = { showQueries: true };
+  
+  // Use a specific file path instead of :memory:
+  const dbPath = path.join(SRV_DIR, "galaxy_data.duckdb");
+  
   const connKey: DataSourceId = {
     providerName: "duckdb",
-    resourceId: ":memory:",
+    resourceId: dbPath, 
   };
   const dbc = await getConnection(connKey);
   return dbc;
@@ -156,15 +173,20 @@ const handleInvoke = async (
 async function main() {
   log.setLevel(log.levels.INFO);
 
-  await initBigquery();
-  await initSnowflake();
+  // await initBigquery();
+  // await initSnowflake();
 
   /*
   const dbc = await initSqlite();
   testImportFile(dbc, "movie_metadata.csv");
 */
   const ddbc = await initDuckDB();
-  await duckDBImportFile(ddbc, "movie_metadata.csv");
+  
+  // Test files:
+  // await duckDBImportFile(ddbc, "movie_metadata.csv");
+  //  // Add additional files here:
+  // await duckDBImportFile(ddbc, "barttest.csv");
+  // await duckDBImportFile(ddbc, "sample.csv");
 
   /*
   console.log('importing metObjects:');
@@ -219,6 +241,19 @@ async function main() {
     const addr = server.address() as AddressInfo;
     log.info("Listening on port ", addr.port);
   });
+
+  // Dynamically handle whatever files Galaxy put in the directory
+  try {
+    const files = fs.readdirSync(SRV_DIR);
+    for (const file of files) {
+      if (file.toLowerCase().endsWith(".csv") || file.toLowerCase().endsWith(".tsv")) {
+        await duckDBImportFile(ddbc, file);
+        log.info(`Imported Galaxy file: ${file}`);
+      }
+    }
+  } catch (err) {
+  log.error("Failed to read directory or import files:", err);
+  }
 }
 
 main();
