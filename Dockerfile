@@ -34,8 +34,10 @@ ENV PATH=${NVM_DIR}/versions/node/v${NODE_VERSION}/bin:${PATH}
 RUN node -v && npm -v 
 
 WORKDIR /app/tad
-# RUN git clone https://github.com/RECETOX/tad.git
-COPY . .
+# Clone git repo with modified code
+RUN git clone -b dev https://github.com/RECETOX/tad.git . \
+    && mkdir ./packages/tadweb-server/public/csv
+    
 RUN npm ci \   
     && npm run bootstrap \
     && ./tools/build-all.sh
