@@ -29,8 +29,8 @@ import { DataSourceId, DataSourcePath, RemoteReltabConnection } from "reltab";
 import _ from "lodash";
 import { useState } from "react";
 
-const testBaseUrl = "http://localhost:8765";
-// const testBaseUrl = window.location.origin;
+// const testBaseUrl = "http://localhost:8765";
+const testBaseUrl = window.location.origin;
 // const TEST_FILE = "movie_metadata.csv";
 
 // const TEST_TABLE = "bigquery-public-data.covid19_jhu_csse.summary";
