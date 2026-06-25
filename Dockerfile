@@ -35,8 +35,7 @@ RUN node -v && npm -v
 
 WORKDIR /app/tad
 # Clone git repo with modified code
-RUN git clone -b dev https://github.com/RECETOX/tad.git . \
-    && mkdir ./packages/tadweb-server/public/csv
+RUN git clone -b dev https://github.com/RECETOX/tad.git . 
     
 RUN npm ci \   
     && npm run bootstrap \
