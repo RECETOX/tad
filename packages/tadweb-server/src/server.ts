@@ -29,7 +29,7 @@ import * as reltabDuckDB from "reltab-duckdb";
 
 const SRV_DIR = "./public/csv";
 
-const portNumber = 8765;
+const portNumber = parseInt(process.env.PORT || "8765");
 
 /*
 const initSqlite = async (): Promise<DataSourceConnection> => {
@@ -237,7 +237,7 @@ async function main() {
   serverInit(ts);
 
   app.post("/tadweb/invoke", (req, res) => handleInvoke(ts, req, res));
-  const server = app.listen(portNumber, () => {
+  const server = app.listen(portNumber, '0.0.0.0', () => {
     const addr = server.address() as AddressInfo;
     log.info("Listening on port ", addr.port);
   });
