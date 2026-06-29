@@ -27,7 +27,20 @@ import {
 import { DuckDBDriver } from "reltab-duckdb";
 import * as reltabDuckDB from "reltab-duckdb";
 
-const SRV_DIR = "./public/csv";
+type ServerCliOptions = {
+  dataDir: string;
+};
+
+const options = commandLineArgs([
+  {
+    name: "dataDir",
+    alias: "d",
+    type: String,
+    defaultValue: "./public/csv",
+  },
+]) as ServerCliOptions;
+
+const dataDir = path.resolve(options.dataDir);
 
 const portNumber = parseInt(process.env.PORT || "8765");
 
@@ -99,7 +112,7 @@ const initDuckDB = async (): Promise<DataSourceConnection> => {
   const rtOptions: any = { showQueries: true };
   
   // Use a specific file path instead of :memory:
-  const dbPath = path.join(SRV_DIR, "galaxy_data.duckdb");
+  const dbPath = path.join(dataDir, "galaxy_data.duckdb");
   
   const connKey: DataSourceId = {
     providerName: "duckdb",
@@ -115,7 +128,7 @@ const duckDBImportFile = async (
 ): Promise<void> => {
   const dbds = dbc as DbDataSource;
   const driver = dbds.db as reltabDuckDB.DuckDBDriver;
-  const filePath = path.join(SRV_DIR, fileName);
+  const filePath = path.join(dataDir, fileName);
   log.info("handleImportFile: importing: " + filePath);
 
   await reltabDuckDB.nativeCSVImport(driver.db, filePath);
@@ -172,6 +185,7 @@ const handleInvoke = async (
 
 async function main() {
   log.setLevel(log.levels.INFO);
+  log.info("Using data directory: ", dataDir);
 
   // await initBigquery();
   // await initSnowflake();
@@ -244,7 +258,7 @@ async function main() {
 
   // Dynamically handle whatever files Galaxy put in the directory
   try {
-    const files = fs.readdirSync(SRV_DIR);
+    const files = fs.readdirSync(dataDir);
     for (const file of files) {
       if (file.toLowerCase().endsWith(".csv") || file.toLowerCase().endsWith(".tsv")) {
         await duckDBImportFile(ddbc, file);
