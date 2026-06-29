@@ -7,7 +7,7 @@
     "prepublish": "npm test",
     "clean": "rimraf dist",
     "build": "tsc",
-    "start": "npm run build && node dist/server.js",
+    "start": "node dist/server.js",
     "testClient": "node dist/testClient.js",
     "test": ""
   },
