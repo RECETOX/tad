@@ -11,7 +11,6 @@ import _ from "lodash";
 import * as React from "react";
 
 /* /// <reference path="slickgrid-es6.d.ts"> */
-import { ResizeSensor } from "@blueprintjs/core";
 import * as he from "he";
 import { useRef, useState } from "react";
 import ReactDOM from "react-dom/client";
@@ -596,7 +595,6 @@ const updateGrid = (gs: GridState, props: DataGridProps) => {
   grid.invalidateAllRows();
   grid.updateRowCount();
   grid.render();
-  grid.resizeCanvas();
 };
 
 const createGridState = (
@@ -710,7 +708,6 @@ export const DataGrid: React.FunctionComponent<DataGridProps> = (
     ) {
       // log.debug("RawGridPane: creating grid state");
       gs = createGridState(containerIdRef.current, props);
-      gs.grid.resizeCanvas();
       setGridState(gs);
       // log.debug("RawGridPane: done creating grid state");
       prevShowColumnHistograms.current = showColumnHistograms;
@@ -723,41 +720,15 @@ export const DataGrid: React.FunctionComponent<DataGridProps> = (
     }
   }, [dataView, gridState, showColumnHistograms]);
 
-  const handleGridResize = () => {
-    // TODO: debounce?
-    if (gridState) {
-      gridState.grid.resizeCanvas();
-    }
-  };
-
-  const handleWindowResize = (e: any) => {
-    // console.log("handleWindowResize: ", e);
-    if (gridState) {
-      /*
-      const $container = $(container)
-      console.log('$container: ', $container)
-      const pvh = $.css($container[0], 'height', true)
-      console.log('viewport height before resize:', pvh)
-      */
-      gridState.grid.resizeCanvas();
-      /*
-      console.log('viewport height after resize:', $.css($container[0], 'height', true))
-      console.log('gridPane.handleWindowResize: done with resize and render')
-      */
-    }
-  };
-
   const lm = showLoadingModal ? <LoadingModal embedded={embedded} /> : null;
 
   return (
     <div className="gridPaneOuter">
       <div className="gridPaneInner">
-        <ResizeSensor onResize={handleGridResize}>
-          <div
-            id={containerIdRef.current}
-            className="slickgrid-container full-height"
-          />
-        </ResizeSensor>
+        <div
+          id={containerIdRef.current}
+          className="slickgrid-container full-height"
+        />
       </div>
       {lm}
     </div>
