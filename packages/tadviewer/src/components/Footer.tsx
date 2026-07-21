@@ -1,9 +1,9 @@
 import * as React from "react";
 import * as reltab from "reltab";
-// import * as actions from "../actions";
-// import { FilterEditor } from "./FilterEditor";
+import * as actions from "../actions";
+import { FilterEditor } from "./FilterEditor";
 import { AppState } from "../AppState";
-// import { ViewState } from "../ViewState";
+import { ViewState } from "../ViewState";
 import { StateRef } from "oneref";
 import { useState } from "react";
 import { getDefaultDialect } from "reltab";
@@ -18,68 +18,68 @@ export interface FooterProps {
 export const Footer: React.FunctionComponent<FooterProps> = (
   props: FooterProps
 ) => {
-  const { appState, stateRef, rightFooterSlot = undefined } = props;
-  // const [expanded, setExpanded] = useState(false);
-  // const [dirty, setDirty] = useState(false);
-  // const [prevFilter, setPrevFilter] = useState<reltab.FilterExp | null>(null);
+  const { appState, stateRef, rightFooterSlot = undefined, onFilter } = props;
+  const [expanded, setExpanded] = useState(false);
+  const [dirty, setDirty] = useState(false);
+  const [prevFilter, setPrevFilter] = useState<reltab.FilterExp | null>(null);
 
   // console.log("Footer: ", appState.toJS());
 
-  // const viewState = appState.viewState;
+  const viewState = appState.viewState;
 
-  // const setExpandedState = (nextState: boolean) => {
-  //   if (nextState && !dirty) {
-  //     // snap current filter into prevFilter:
-  //     setExpanded(nextState);
-  //     setPrevFilter(viewState.viewParams.filterExp);
-  //     setDirty(true);
-  //   } else {
-  //     setExpanded(nextState);
-  //   }
-  // };
+  const setExpandedState = (nextState: boolean) => {
+    if (nextState && !dirty) {
+      // snap current filter into prevFilter:
+      setExpanded(nextState);
+      setPrevFilter(viewState.viewParams.filterExp);
+      setDirty(true);
+    } else {
+      setExpanded(nextState);
+    }
+  };
 
-  // const handleFilterButtonClicked = (event: any) => {
-  //   event.preventDefault();
-  //   const nextState = !expanded;
-  //   setExpandedState(nextState);
-  // };
+  const handleFilterButtonClicked = (event: any) => {
+    event.preventDefault();
+    const nextState = !expanded;
+    setExpandedState(nextState);
+  };
 
-  // const handleFilterCancel = () => {
-  //   // restore previous filter:
-  //   const fe = prevFilter || new reltab.FilterExp();
-  //   actions.setFilter(fe, stateRef);
-  //   setExpandedState(false);
-  //   setDirty(false);
-  //   setPrevFilter(null);
-  // };
+  const handleFilterCancel = () => {
+    // restore previous filter:
+    const fe = prevFilter || new reltab.FilterExp();
+    actions.setFilter(fe, stateRef);
+    setExpandedState(false);
+    setDirty(false);
+    setPrevFilter(null);
+  };
 
-  // const handleFilterApply = (filterExp: reltab.FilterExp) => {
-  //   actions.setFilter(filterExp, stateRef);
-  //   onFilter?.(filterExp);
-  // };
+  const handleFilterApply = (filterExp: reltab.FilterExp) => {
+    actions.setFilter(filterExp, stateRef);
+    onFilter?.(filterExp);
+  };
 
-  // const handleFilterDone = () => {
-  //   setExpandedState(false);
-  //   setDirty(false);
-  //   setPrevFilter(null);
-  // };
+  const handleFilterDone = () => {
+    setExpandedState(false);
+    setDirty(false);
+    setPrevFilter(null);
+  };
 
-  // const filterExp = appState.viewState.viewParams.filterExp;
-  // const filterStr = filterExp.toSqlWhere(getDefaultDialect());
+  const filterExp = appState.viewState.viewParams.filterExp;
+  const filterStr = filterExp.toSqlWhere(getDefaultDialect());
 
-  // const expandClass = expanded ? "footer-expanded" : "footer-collapsed";
+  const expandClass = expanded ? "footer-expanded" : "footer-collapsed";
 
-  // const editorComponent = expanded ? (
-  //   <FilterEditor
-  //     appState={appState}
-  //     stateRef={stateRef}
-  //     schema={viewState.baseSchema}
-  //     filterExp={filterExp}
-  //     onCancel={handleFilterCancel}
-  //     onApply={handleFilterApply}
-  //     onDone={handleFilterDone}
-  //   />
-  // ) : null;
+  const editorComponent = expanded ? (
+    <FilterEditor
+      appState={appState}
+      stateRef={stateRef}
+      schema={viewState.baseSchema}
+      filterExp={filterExp}
+      onCancel={handleFilterCancel}
+      onApply={handleFilterApply}
+      onDone={handleFilterDone}
+    />
+  ) : null;
 
   let rowCountBlock = null;
   const queryView = appState.viewState.queryView;
@@ -110,20 +110,20 @@ export const Footer: React.FunctionComponent<FooterProps> = (
     );
   }
   return (
-    <div className={"footer "}>
+    <div className={"footer " + expandClass}>
       <div className="footer-top-row">
-        {/* <div className="footer-filter-block">
+        { <div className="footer-filter-block">
           <a onClick={(event) => handleFilterButtonClicked(event)} tabIndex={0}>
             Filter
           </a>
           <span className="filter-summary"> {filterStr}</span>
-        </div> */}
+        </div> }
         <div className="footer-right-block">
           {rowCountBlock}
           {rightFooterSlot}
         </div>
       </div>
-      {/* {editorComponent} */}
+      {editorComponent}
     </div>
   );
 };

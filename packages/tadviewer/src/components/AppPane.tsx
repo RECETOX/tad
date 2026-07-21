@@ -443,9 +443,8 @@ export const AppPane: React.FunctionComponent<AppPaneProps> = ({
         viewParams={viewState.viewParams}
         delayedCalcMode={viewState.delayedCalcMode}
         embedded={embedded}
-        stateRef={stateRef}
-        appState={appState}       // <-- Add this
-        onFilter={onFilter}       // <-- Add this
+        stateRef={stateRef}  
+            
       />
     );
     const loadingModal =
@@ -470,7 +469,7 @@ export const AppPane: React.FunctionComponent<AppPaneProps> = ({
           appState={appState}
           stateRef={stateRef}
           rightFooterSlot={rightFooterSlot}
-          // onFilter={onFilter}
+          onFilter={onFilter}
         />
       </div>
     );
